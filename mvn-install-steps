@@ -1,0 +1,31 @@
+sudo apt update
+sudo apt install default-jdk ca-certificates curl
+------
+java -version
+---------
+cd /tmp
+MAVEN_VERSION=$(curl -fsSL https://api.github.com/repos/apache/maven/releases/latest | grep -oP '"tag_name": "maven-\K[^"]+')
+if [ -z "$MAVEN_VERSION" ]; then
+  echo "Error: Could not determine the latest Maven version."
+else
+  curl -fL "https://dlcdn.apache.org/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.tar.gz" -o "apache-maven-${MAVEN_VERSION}-bin.tar.gz"
+fi
+----------------
+sudo tar xzf "apache-maven-${MAVEN_VERSION}-bin.tar.gz" -C /opt/
+
+-------------------------------------------------
+
+sudo ln -sfn /opt/apache-maven-${MAVEN_VERSION} /opt/maven
+
+-------------------------------------------------------
+sudo tee /etc/profile.d/maven.sh >/dev/null <<'EOF'
+export M2_HOME=/opt/maven
+export PATH="${M2_HOME}/bin:${PATH}"
+EOF
+
+----------------------------------------------
+
+source /etc/profile
+--------------------------------------------
+mvn -version
+--------------------------------------------
